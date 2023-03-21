@@ -1,0 +1,80 @@
+Sub chatGPT()
+  ' Created by Ashish Srivastava, IBM, March 2023
+  Dim request As Object
+  Dim text, response, API, API_KEY, DisplayText As String
+  Dim temperature As String
+  Dim max_tokens As String
+  Dim startPos As Long
+  Dim lastRow As Long
+  Dim rng As Range
+  Dim text1, text_B As String
+  
+    
+  'API Info
+  API = "https://api.openai.com/v1/chat/completions"
+  'API_KEY = Trim(Range("F3").Value)
+  API_KEY = Trim(Range("M2").Value)
+
+  If API_KEY = "" Then
+        MsgBox "Error: API key is blank!"
+        Exit Sub
+  End If
+    
+  'Set temperature and max_tokens values
+   temperature = "0.1"
+   max_tokens = "500"
+    
+   'set last row with question
+   lastRow = Cells(Rows.Count, "A").End(xlUp).Row
+   
+   For j = 2 To lastRow
+    text = Cells(j, "A").Value
+    text_B = Cells(j, "B").Value
+    
+  'Question cell should not be blank and Answer cell should be blank
+   If text <> "" And text_B = "" Then
+  'Create an HTTP request object
+   Set request = CreateObject("MSXML2.XMLHTTP")
+   With request
+     .Open "POST", API, False
+     .setRequestHeader "Content-Type", "application/json"
+     .setRequestHeader "Authorization", "Bearer " & API_KEY
+     .send "{""model"": ""gpt-3.5-turbo"", ""temperature"": " & temperature & ", ""max_tokens"": " & max_tokens & ",""messages"": [{""content"":""" & text & """,""role"":""user""}]}"
+   response = .responsetext
+   End With
+  
+  
+  'Extract content
+  Result = Split(response, """,""")
+  For i = LBound(Result) To UBound(Result)
+    If InStr(Result(i), "content") > 0 Then
+            startPos = i
+            Exit For
+    End If
+  Next i
+  
+  DisplayText = Mid(Result(startPos), InStr(Result(startPos), ":") + 2, InStr(Result(startPos), """},"))
+  DisplayText = Mid(DisplayText, 1, InStr(DisplayText, """},") - 1)
+  
+  Set rng = Range("B" & j)
+  rng.Clear
+  
+  DisplayText = Replace(DisplayText, "\n", "")
+  DisplayText = Replace(DisplayText, "\", "")
+  DisplayText = Replace(DisplayText, "As an AI language model, ", "")
+  
+  Range("B" & j).Value = DisplayText
+  'Formatting of the answer cell should be same as question cell
+  Range("A" & j).Copy
+  Range("B" & j).PasteSpecial xlPasteFormats
+  Application.CutCopyMode = False
+  
+  'Split to multiple rows
+  rng.WrapText = True
+    
+  'Clean up the object
+  Set request = Nothing
+  End If
+  Next j
+
+End Sub
