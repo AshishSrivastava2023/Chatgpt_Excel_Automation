@@ -1,8 +1,8 @@
 # Chatgpt_Excel_Automation
 This Excel is integrated with OpenAI Chatgpt. The user can write question in excel, press "Ask ChatGPT" button and get the answer back into excel from Chatgpt. It's a handy tool that can be used to harness the power of chatgpt.
 Steps to use the excel -  
-First create the OpenAI account and generate the API Key. This API Key is confidential for you. Never share it with anyone.
-Steps to generate the OpenAI API Key -
+1. First create the OpenAI account and generate the API Key. This API Key is confidential for you. Never share it with anyone.
+2. Steps to generate the OpenAI API Key -
 1. Create OpenAI account by clicking on "Sign up" button at https://platform.openai.com/account/api-keys
 2. After you have successfully created an account and have logged in, click on "Personal" on top right hand corner
 3. Click on "View API keys"
